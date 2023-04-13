@@ -7,9 +7,11 @@ import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
@@ -18,8 +20,22 @@ class PermisoUbicacionActivity : AppCompatActivity() {
     private val REQUEST_CODE_LOCATION = 0
     private val REQUEST_CODE_GPS = 1
 
-    private lateinit var tvGPS:TextView
-    private lateinit var tvPermisoUbicacion:TextView
+    private lateinit var tvGPS: TextView
+    private lateinit var tvPermisoUbicacion: TextView
+
+    private val responseLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                Toast.makeText(this@PermisoUbicacionActivity, "GPS habilitado", Toast.LENGTH_SHORT)
+                    .show()
+                tvGPS.text = "Habilitado"
+            } else {
+                Toast.makeText(this, "GPS no habilitado", Toast.LENGTH_SHORT).show()
+                tvGPS.text = "No Habilitado"
+            }
+        }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,39 +76,19 @@ class PermisoUbicacionActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode == REQUEST_CODE_LOCATION){
+        if (requestCode == REQUEST_CODE_LOCATION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permiso de ubicación habilitado", Toast.LENGTH_SHORT).show()
                 //btnNext.isEnabled = true
                 tvPermisoUbicacion.text = "Habilitado"
             } else {
-                Toast.makeText(this, "Permiso de ubicación no habilitado", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Permiso de ubicación no habilitado", Toast.LENGTH_SHORT)
+                    .show()
                 tvPermisoUbicacion.text = "No Habilitado"
 
             }
         }
     }
-
-    //Override verifica si se activo GPS
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        //TODO reparar el Deprecado
-        if (requestCode == REQUEST_CODE_GPS) {
-            val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                Toast.makeText(this, "GPS habilitado", Toast.LENGTH_SHORT).show()
-//                btnNext.isEnabled = true
-                tvGPS.text = "Habilitado"
-            } else {
-                Toast.makeText(this, "GPS no habilitado", Toast.LENGTH_SHORT).show()
-                tvGPS.text = "No Habilitado"
-
-            }
-        }
-    }
-
-
-
 
     //Verifica si esta el permiso de Ubicacion
     private fun estaHabilitadoPermisoUbicacion() = ContextCompat.checkSelfPermission(
@@ -111,28 +107,28 @@ class PermisoUbicacionActivity : AppCompatActivity() {
 
 
     //Verifica si el GPs esta Activado
-    private fun estaHabilitadoGPS():Boolean{
+    private fun estaHabilitadoGPS(): Boolean {
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
+
     //Solicita Gps
-    private fun solicitaActivacionGPS(){
+    private fun solicitaActivacionGPS() {
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-        startActivityForResult(intent, REQUEST_CODE_GPS)
-        //TODO reparar el Deprecado
+        responseLauncher.launch(intent)
     }
 
     override fun onResume() {
         super.onResume()
-        if(estaHabilitadoPermisoUbicacion()){
+        if (estaHabilitadoPermisoUbicacion()) {
             tvPermisoUbicacion.text = "Habilitado"
-        }else{
+        } else {
             tvPermisoUbicacion.text = "No Habilitado"
         }
 
-        if(estaHabilitadoGPS()){
+        if (estaHabilitadoGPS()) {
             tvGPS.text = "Habilitado"
-        }else{
+        } else {
             tvGPS.text = "No Habilitado"
         }
     }
