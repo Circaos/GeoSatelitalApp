@@ -19,10 +19,11 @@ import com.cristopherrj.appretogeosatelital.Views.Login.LoginActivity
 class PermisoUbicacionActivity : AppCompatActivity() {
 
     private val REQUEST_CODE_LOCATION = 0
-    private val REQUEST_CODE_GPS = 1
+    //private val REQUEST_CODE_GPS = 1
 
     private lateinit var tvGPS: TextView
     private lateinit var tvPermisoUbicacion: TextView
+    private lateinit var btnSiguiente:Button
 
     private val responseLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -43,7 +44,7 @@ class PermisoUbicacionActivity : AppCompatActivity() {
         setContentView(R.layout.activity_permiso_ubicacion)
 
         //Botones
-        val btnSiguiente = findViewById<Button>(R.id.btnSiguiente)
+        btnSiguiente = findViewById<Button>(R.id.btnSiguiente)
         val btnUbicacionPermiso = findViewById<Button>(R.id.btnUbicacionPermiso)
         val btnGPS = findViewById<Button>(R.id.btnGPS)
         tvGPS = findViewById<TextView>(R.id.tvGPS)
@@ -61,7 +62,6 @@ class PermisoUbicacionActivity : AppCompatActivity() {
 
         //Boton GPS
         btnGPS.setOnClickListener {
-
             if (estaHabilitadoGPS()) {
                 Toast.makeText(this, "GPS ya habilitado", Toast.LENGTH_SHORT).show()
             } else {
@@ -94,7 +94,6 @@ class PermisoUbicacionActivity : AppCompatActivity() {
                 Toast.makeText(this, "Permiso de ubicación no habilitado", Toast.LENGTH_SHORT)
                     .show()
                 tvPermisoUbicacion.text = "No Habilitado"
-
             }
         }
     }
@@ -114,7 +113,6 @@ class PermisoUbicacionActivity : AppCompatActivity() {
         )
     }
 
-
     //Verifica si el GPs esta Activado
     private fun estaHabilitadoGPS(): Boolean {
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -127,6 +125,7 @@ class PermisoUbicacionActivity : AppCompatActivity() {
         responseLauncher.launch(intent)
     }
 
+    //Cuando se regresa al Activity, Verifica los permisos
     override fun onResume() {
         super.onResume()
         if (estaHabilitadoPermisoUbicacion()) {
@@ -140,6 +139,14 @@ class PermisoUbicacionActivity : AppCompatActivity() {
         } else {
             tvGPS.text = "No Habilitado"
         }
+
+        btnSiguiente.isEnabled = estaHabilitadoGPS() && estaHabilitadoPermisoUbicacion()
+
+//        if(estaHabilitadoGPS() && estaHabilitadoPermisoUbicacion()){
+//            val intent = Intent(this,LoginActivity::class.java)
+//            startActivity(intent)
+//            finish()
+//        }
     }
 
 }
