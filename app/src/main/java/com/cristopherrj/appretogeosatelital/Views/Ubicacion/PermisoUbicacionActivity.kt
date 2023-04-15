@@ -1,4 +1,4 @@
-package com.cristopherrj.appretogeosatelital
+package com.cristopherrj.appretogeosatelital.Views.Ubicacion
 
 import android.content.Context
 import android.content.Intent
@@ -7,13 +7,14 @@ import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.cristopherrj.appretogeosatelital.R
+import com.cristopherrj.appretogeosatelital.Views.Login.LoginActivity
 
 class PermisoUbicacionActivity : AppCompatActivity() {
 
@@ -67,6 +68,14 @@ class PermisoUbicacionActivity : AppCompatActivity() {
                 solicitaActivacionGPS()
             }
         }
+
+        //Boton next Login
+        btnSiguiente.setOnClickListener {
+            val intent = Intent(this,LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
     }
 
     //Override verifica permiso Ubicacion

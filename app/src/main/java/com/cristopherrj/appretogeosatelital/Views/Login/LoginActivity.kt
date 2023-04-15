@@ -1,7 +1,8 @@
-package com.cristopherrj.appretogeosatelital
+package com.cristopherrj.appretogeosatelital.Views.Login
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.cristopherrj.appretogeosatelital.R
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
