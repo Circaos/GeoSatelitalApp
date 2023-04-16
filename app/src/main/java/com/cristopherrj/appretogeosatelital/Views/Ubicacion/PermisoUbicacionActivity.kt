@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,11 +20,11 @@ import com.cristopherrj.appretogeosatelital.Views.Login.LoginActivity
 class PermisoUbicacionActivity : AppCompatActivity() {
 
     private val REQUEST_CODE_LOCATION = 0
-    //private val REQUEST_CODE_GPS = 1
 
-    private lateinit var tvGPS: TextView
-    private lateinit var tvPermisoUbicacion: TextView
-    private lateinit var btnSiguiente:Button
+    private lateinit var btnSiguiente: Button
+    private lateinit var ivGPS: ImageView
+    private lateinit var ivPermisoUbicacion: ImageView
+
 
     private val responseLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -31,10 +32,11 @@ class PermisoUbicacionActivity : AppCompatActivity() {
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 Toast.makeText(this@PermisoUbicacionActivity, "GPS habilitado", Toast.LENGTH_SHORT)
                     .show()
-                tvGPS.text = "Habilitado"
+                ivGPS.setImageResource(R.drawable.icon_ok)
+
             } else {
                 Toast.makeText(this, "GPS no habilitado", Toast.LENGTH_SHORT).show()
-                tvGPS.text = "No Habilitado"
+                ivGPS.setImageResource(R.drawable.icon_alerta)
             }
         }
 
@@ -47,11 +49,13 @@ class PermisoUbicacionActivity : AppCompatActivity() {
         btnSiguiente = findViewById<Button>(R.id.btnSiguiente)
         val btnUbicacionPermiso = findViewById<Button>(R.id.btnUbicacionPermiso)
         val btnGPS = findViewById<Button>(R.id.btnGPS)
-        tvGPS = findViewById<TextView>(R.id.tvGPS)
-        tvPermisoUbicacion = findViewById<TextView>(R.id.tvPermisoUbicacion)
+        ivGPS = findViewById(R.id.ivEncenderGPS)
+        ivPermisoUbicacion = findViewById(R.id.ivPermisoUbicacion)
+
 
         //boton Ubicacion Permiso
         btnUbicacionPermiso.setOnClickListener {
+            verificaPermisoUbicacion()
             if (estaHabilitadoPermisoUbicacion()) {
                 Toast.makeText(this, "Permiso de ubicación ya habilitado", Toast.LENGTH_SHORT)
                     .show()
@@ -62,6 +66,7 @@ class PermisoUbicacionActivity : AppCompatActivity() {
 
         //Boton GPS
         btnGPS.setOnClickListener {
+            verificaGPS()
             if (estaHabilitadoGPS()) {
                 Toast.makeText(this, "GPS ya habilitado", Toast.LENGTH_SHORT).show()
             } else {
@@ -71,9 +76,19 @@ class PermisoUbicacionActivity : AppCompatActivity() {
 
         //Boton next Login
         btnSiguiente.setOnClickListener {
-            val intent = Intent(this,LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+
+            if (estaHabilitadoGPS() && estaHabilitadoPermisoUbicacion()) {
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                Toast.makeText(this, "Verifica Configuracion", Toast.LENGTH_SHORT).show()
+                verificaGPS()
+                verificaPermisoUbicacion()
+                btnSiguiente.isEnabled = false
+            }
+
+
         }
 
     }
@@ -88,12 +103,12 @@ class PermisoUbicacionActivity : AppCompatActivity() {
         if (requestCode == REQUEST_CODE_LOCATION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permiso de ubicación habilitado", Toast.LENGTH_SHORT).show()
-                //btnNext.isEnabled = true
-                tvPermisoUbicacion.text = "Habilitado"
+                ivPermisoUbicacion.setImageResource(R.drawable.icon_ok)
+
             } else {
                 Toast.makeText(this, "Permiso de ubicación no habilitado", Toast.LENGTH_SHORT)
                     .show()
-                tvPermisoUbicacion.text = "No Habilitado"
+                ivPermisoUbicacion.setImageResource(R.drawable.icon_alerta)
             }
         }
     }
@@ -128,25 +143,29 @@ class PermisoUbicacionActivity : AppCompatActivity() {
     //Cuando se regresa al Activity, Verifica los permisos
     override fun onResume() {
         super.onResume()
-        if (estaHabilitadoPermisoUbicacion()) {
-            tvPermisoUbicacion.text = "Habilitado"
-        } else {
-            tvPermisoUbicacion.text = "No Habilitado"
-        }
 
-        if (estaHabilitadoGPS()) {
-            tvGPS.text = "Habilitado"
-        } else {
-            tvGPS.text = "No Habilitado"
-        }
+        verificaPermisoUbicacion()
+        verificaGPS()
 
         btnSiguiente.isEnabled = estaHabilitadoGPS() && estaHabilitadoPermisoUbicacion()
 
-//        if(estaHabilitadoGPS() && estaHabilitadoPermisoUbicacion()){
-//            val intent = Intent(this,LoginActivity::class.java)
-//            startActivity(intent)
-//            finish()
-//        }
     }
+
+    private fun verificaPermisoUbicacion() {
+        if (estaHabilitadoPermisoUbicacion()) {
+            ivPermisoUbicacion.setImageResource(R.drawable.icon_ok)
+        } else {
+            ivPermisoUbicacion.setImageResource(R.drawable.icon_alerta)
+        }
+    }
+
+    private fun verificaGPS() {
+        if (estaHabilitadoGPS()) {
+            ivGPS.setImageResource(R.drawable.icon_ok)
+        } else {
+            ivGPS.setImageResource(R.drawable.icon_alerta)
+        }
+    }
+
 
 }

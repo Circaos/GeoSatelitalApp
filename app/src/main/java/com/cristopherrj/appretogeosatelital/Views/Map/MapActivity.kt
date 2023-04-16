@@ -28,17 +28,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback,
     override fun onMapReady(googleMap: GoogleMap) {
 //        TODO("Not yet implemented")
         Log.i("criscris", "Iniciando createonMapReady")
-
         map = googleMap
-//        createMarker()
-//        createPolylines()
         map.setOnMyLocationButtonClickListener(this)
         map.setOnMyLocationClickListener(this)
-//        enableLocation()
         habilitarBotonUbicacion()
     }
-
-
 
     private fun createFragment(){ //Crea el Fragment
         Log.i("criscris", "Iniciando createFragment")
@@ -50,7 +44,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback,
         //es un onverride/ para cuando de click al boton de geolocalizacion
         Toast.makeText(
             this,
-            "Boton Pulsado",
+            "Yendo a Ubicacion",
             Toast.LENGTH_SHORT
         ).show()
         return false //devulve false si quieres que se vaya a tu posicion, devuelve true si no quieres

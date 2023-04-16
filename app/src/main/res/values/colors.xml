@@ -10,5 +10,11 @@
 
 <!--    Colores de GeoSatelital -->
     <color name="azulOscuro">#005183</color>
+    <color name="azulClaro">#12699F</color>
+    <color name="verdeClaro">#00A57A</color>
+    <color name="verdeCentro">#00A38E</color>
+    <color name="verdeOscuro">#00A0A7</color>
+    <color name="celeste">#009ED0</color>
+    <color name="shadow">#43000000</color>
 
 </resources>
